@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import reactor.core.publisher.Flux;
+
 @RestController
 public class ChatController {
 
@@ -28,9 +30,11 @@ public class ChatController {
 	 * @return
 	 */
 	@GetMapping("/info")
-	public String info(
-			@RequestParam(value = "message", defaultValue = "Give me some general information about AWS Serverless") String message) {
-		return chatClient.prompt().user(message).call().content(); // short for getResult().getOutput().getContent();
+	public String info(@RequestParam(value = "message", defaultValue = "Give me some general information about AWS Serverless") String message) {
+		return this.chatClient.prompt()
+			   .user(message)
+			   .call()
+			   .content(); // short for getResult().getOutput().getContent();
 	}
 
 	/**
@@ -41,9 +45,26 @@ public class ChatController {
 	 */
 	@GetMapping("/info-by-topic")
 	public String infoByTopic(@RequestParam String topic) {
-		return chatClient.prompt()
-				.user(u -> u.text("Give me some general information about {topic}").param("topic", topic)).call()
+		return this.chatClient.prompt()
+				.user(u -> u.text("Give me some general information about {topic}")
+				.param("topic", topic))
+				.call()
 				.content();
 	}
 
+	/**
+	 * Take in a topic as a request parameter and use that param in the user message
+	 * Info is delivered in non blocking manner 
+	 * 
+	 * @param topic
+	 * @return
+	 */
+	@GetMapping("/stream-info-by-topic")
+	public Flux<String> streamInfoByTopic(@RequestParam String topic) {
+		return this.chatClient.prompt()
+				.user(u -> u.text("Give me some general information about {topic}")
+				.param("topic", topic))
+				.stream()
+				.content();
+	}
 }

@@ -31,8 +31,10 @@ public class ImageExplanationController {
 
 	@GetMapping("/image-to-text")
 	public String image() throws IOException {
-		return chatClient.prompt().user(u -> u.text("Can you explain me what you see in the provided image?")
-				.media(MimeTypeUtils.IMAGE_JPEG, sampleImage)).call().content();
+		return this.chatClient.prompt().user(u -> u.text("Can you explain me what you see in the provided image?")
+				.media(MimeTypeUtils.IMAGE_JPEG, sampleImage))
+				.call()
+			    .content();
 	}
 
 }
