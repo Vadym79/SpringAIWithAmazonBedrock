@@ -2,6 +2,7 @@ package dev.vkazulkin.tool.search;
 
 
 import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -21,8 +22,7 @@ public class GoogleSearchTool {
 	}
 
 	@Tool(name="Google_Search_Tool", description = "Provide future Java and AWS cloud conference list where I can apply for the talk")
-    public String search() {
-    	String query = "provide Java and AWS cloud conference list where I can apply for the talk";
+    public String search(@ToolParam(description = "Provide future conference list for the conferences provided in the user prompt") String query) {
     	return restClient.get()
     			  .uri("https://www.googleapis.com/customsearch/v1?key="+gooleSearchAPIKey+"&cx="+cx+"&q="+query)
     			  .retrieve()
