@@ -21,8 +21,8 @@ public class GoogleSearchTool {
 	public GoogleSearchTool() {
 	}
 
-	@Tool(name="Google_Search_Tool", description = "Provide conference list for the topics provided in the user's prompt")
-    public String search(@ToolParam(description = "Provide conference list for the topics provided in the user's prompt") String topic) {
+	@Tool(name="Google_Search_Tool", description = "Search for the conference list for one or more topics provided")
+    public String search(@ToolParam(description = "Search for conference list for the topics provided in the user's prompt. Only include the conference time zone but don't include any conference dates in the search") String topic) {
     	System.out.println("search topic "+topic);
 		return restClient.get()
     			  .uri("https://www.googleapis.com/customsearch/v1?key="+gooleSearchAPIKey+"&cx="+cx+"&q="+topic)

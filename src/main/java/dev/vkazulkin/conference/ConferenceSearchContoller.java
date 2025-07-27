@@ -31,7 +31,7 @@ public class ConferenceSearchContoller {
     private static final String SYSTEM_PROMPT="""
     		You are only able to answer questions about upcoming technical conferences. 
     		If the provided search term {topic} is not a technical term or is not connected to the conference for the software development, 
-    		please respond in the friendly manner that you're not able to provide this information without performing any search.
+    		please respond in the friendly manner that you're not able to provide this information.
     		""";
     
     public ConferenceSearchContoller(ChatClient.Builder builder, ZonedDateTimeTool zonedDateTimeTool, GoogleSearchTool googleSearchTool) {
