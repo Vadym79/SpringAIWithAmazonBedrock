@@ -1,4 +1,4 @@
-package dev.vkazulkin.tool.date;
+package dev.vkazulkin.tool.zdt;
 
 
 import org.springframework.ai.chat.client.ChatClient;
@@ -6,20 +6,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class DateChatController {
+public class ZonedDateTimeChatController {
 	
     private final ChatClient chatClient;
-    private final DateTool dateTool;
+    private final ZonedDateTimeTool zonedDateTimeTool;
 
-    public DateChatController(ChatClient.Builder builder, DateTool dateTool) {
+    public ZonedDateTimeChatController(ChatClient.Builder builder, ZonedDateTimeTool zonedDateTimeTool) {
         this.chatClient = builder.build();
-        this.dateTool=dateTool;
+        this.zonedDateTimeTool=zonedDateTimeTool;
     }
 
     @GetMapping("/date-tool")
     public String tools() {
         return this.chatClient.prompt("Get is the current date and time?")
-                .tools(this.dateTool)
+                .tools(this.zonedDateTimeTool)
                 .call()
                 .content();
     }

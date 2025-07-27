@@ -21,10 +21,11 @@ public class GoogleSearchTool {
 	public GoogleSearchTool() {
 	}
 
-	@Tool(name="Google_Search_Tool", description = "Provide future Java and AWS cloud conference list where I can apply for the talk")
-    public String search(@ToolParam(description = "Provide future conference list for the conferences provided in the user prompt") String query) {
-    	return restClient.get()
-    			  .uri("https://www.googleapis.com/customsearch/v1?key="+gooleSearchAPIKey+"&cx="+cx+"&q="+query)
+	@Tool(name="Google_Search_Tool", description = "Provide conference list for the topics provided in the user's prompt")
+    public String search(@ToolParam(description = "Provide conference list for the topics provided in the user's prompt") String topic) {
+    	System.out.println("search topic "+topic);
+		return restClient.get()
+    			  .uri("https://www.googleapis.com/customsearch/v1?key="+gooleSearchAPIKey+"&cx="+cx+"&q="+topic)
     			  .retrieve()
     			  .body(String.class);
     }
