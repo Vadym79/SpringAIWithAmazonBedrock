@@ -1,0 +1,43 @@
+{
+  "conferences" : [ {
+    "name" : "JCON Europe",
+    "topics" : [ "Java", "JVM", "AI", "Spring", "Cloud" ],
+    "homepage" : "https://2026.europe.jcon.one/",
+    "startDate" : [ 2026, 4, 20 ],
+    "endDate" : [ 2026, 4, 23 ],
+    "city" : "Cologne",
+    "linkToCallforPapers" : "https://2026.europe.jcon.one/cfp"
+  }, {
+    "name" : "Voxxed Days Belgium",
+    "topics" : [ "Spring", "AI", "JVM", "Java" ],
+    "homepage" : "https://devoxx.be/",
+    "startDate" : [ 2025, 10, 6 ],
+    "endDate" : [ 2025, 10, 10 ],
+    "city" : "Antwerpen",
+    "linkToCallforPapers" : "https://devoxx.be/cfp"
+  }, {
+    "name" : "PyCon",
+    "topics" : [ "ML", "AI", "Python" ],
+    "homepage" : "https://pycon.com/",
+    "startDate" : [ 2025, 11, 4 ],
+    "endDate" : [ 2025, 11, 6 ],
+    "city" : "Sydney",
+    "linkToCallforPapers" : "https://pycon/cfp"
+  }, {
+    "name" : "Serverless Days Sao Paolo",
+    "topics" : [ "AWS Cloud", "Azure Cloud", "Google Cloud", "Gen AI", "Serverless" ],
+    "homepage" : "https://saopaolo-serverlessdays.io",
+    "startDate" : [ 2025, 11, 8 ],
+    "endDate" : [ 2025, 11, 8 ],
+    "city" : "Sao Paolo",
+    "linkToCallforPapers" : "https://saopaolo-serverlessdays.io"
+  }, {
+    "name" : "AWS Re:Invent",
+    "topics" : [ "Serverless", "Gen AI", "AWS Cloud" ],
+    "homepage" : "https://reinvent.awsevents.com",
+    "startDate" : [ 2025, 12, 1 ],
+    "endDate" : [ 2025, 12, 5 ],
+    "city" : "Las Vegas",
+    "linkToCallforPapers" : "https://reinvent.awsevents.com/cfp"
+  } ]
+}

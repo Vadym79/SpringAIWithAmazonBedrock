@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.vkazulkin.tool.search.GoogleSearchTool;
+import dev.vkazulkin.tool.conference.ConferenceSearchTool;
 import dev.vkazulkin.tool.zdt.ZonedDateTimeTool;
 import reactor.core.publisher.Flux;
 
@@ -15,16 +15,14 @@ public class ConferenceSearchContoller {
 	
     private final ChatClient chatClient;
     private final ZonedDateTimeTool zonedDateTimeTool;
-    private final GoogleSearchTool googleSearchTool;
+    private final ConferenceSearchTool conferenceSearchTool;
     
     private static final String USER_PROMPT= """
 			
 			1. Provide me with 5 best suggestions to apply for the talk for the {topic} conferences.
-			2  Conferences should take place in the current time zone or the time zone nearby
-			3. Conferences should start between the current date and the next {number_of_months} months. 
-			4. Please provide the information in the response about my current date and time zone that you used for the search
-			5. Please include the following conference info in the response only: name, homepage, date, call for papers link
-			6. Please format the response to present each conference info in the separate line 
+			2. The provided conference start date attribute should be within the next {number_of_months} months. 
+			3. Please include the following conference info in the response only: name, topics, homepage, start and end date, city and call for papers link
+			4. Please format the response to present each conference info in the separate line 
 		
 			""";
     
@@ -34,10 +32,11 @@ public class ConferenceSearchContoller {
     		please respond in the friendly manner that you're not able to provide this information.
     		""";
     
-    public ConferenceSearchContoller(ChatClient.Builder builder, ZonedDateTimeTool zonedDateTimeTool, GoogleSearchTool googleSearchTool) {
+    public ConferenceSearchContoller(ChatClient.Builder builder, ZonedDateTimeTool zonedDateTimeTool, ConferenceSearchTool conferenceSearchTool) {
 		var options = ToolCallingChatOptions.builder()
 				 .model("amazon.nova-lite-v1:0")
-				  //.model("amazon.nova-pro-v1:0")
+				 // .model("amazon.nova-pro-v1:0")
+				  //.model("anthropic.claude-3-5-sonnet-20240620-v1:0")
 				 .maxTokens(2000).build();
 		
 		this.chatClient = builder
@@ -45,7 +44,7 @@ public class ConferenceSearchContoller {
 				//.defaultSystem(SYSTEM_PROMPT)
 				.build();
         this.zonedDateTimeTool=zonedDateTimeTool;
-        this.googleSearchTool=googleSearchTool;
+        this.conferenceSearchTool=conferenceSearchTool;
     }
 
     @GetMapping("/conference-search")
@@ -54,7 +53,7 @@ public class ConferenceSearchContoller {
         return this.chatClient.prompt()
         		.system(s -> s.text(SYSTEM_PROMPT).param("topic", topic))
         		.user(u -> u.text(USER_PROMPT).param("topic", topic).param("number_of_months", numOfMonths))
-                .tools(this.zonedDateTimeTool, this.googleSearchTool)
+                .tools(this.zonedDateTimeTool, this.conferenceSearchTool)
                 .stream()
                 .content();
     }
