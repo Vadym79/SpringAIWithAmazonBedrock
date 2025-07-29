@@ -19,11 +19,9 @@ public class ConferenceSearchContoller {
     
     private static final String USER_PROMPT= """
 			
-			1. Provide me with 5 best suggestions to apply for the talk for the {topic} conferences.
+			1. Provide me with the best suggestions to apply for the talk for the {topic} conferences.
 			2. The provided conference start date attribute should be within the next {number_of_months} months. 
 			3. Please include the following conference info in the response only: name, topics, homepage, start and end date, city and call for papers link
-			4. Please format the response to present each conference info in the separate line 
-		
 			""";
     
     private static final String SYSTEM_PROMPT="""
