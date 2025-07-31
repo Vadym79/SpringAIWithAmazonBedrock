@@ -9,7 +9,7 @@ import org.springframework.web.client.RestClient;
 
 @RestController
 public class GoogleSearchController {
-	
+	/*
 	@Value("${GOOGLE_CUSTOM_SEARCH_API_KEY}")
 	private String gooleSearchAPIKey;
 	
@@ -29,4 +29,5 @@ public class GoogleSearchController {
     			  .body(String.class);
     	System.out.print(result);
     }
+    */
 }
