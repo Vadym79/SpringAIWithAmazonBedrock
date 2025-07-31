@@ -22,48 +22,45 @@ public class ConferenceSearchTool {
 	public ConferenceSearchTool(ObjectMapper objectMapper) {
 		objectMapper.registerModule(new JavaTimeModule());
 		try (InputStream inputStream = TypeReference.class.getResourceAsStream("/conferences.json")) {
-			conferences=objectMapper.readValue(inputStream, Conferences.class).conferences();
-		} 
-		catch(IOException ex) {
+			conferences = objectMapper.readValue(inputStream, Conferences.class).conferences();
+		} catch (IOException ex) {
 			throw new RuntimeException("can't read conferences");
 		}
-	
+
 	}
 
-	@Tool(name="Conference_Search_Tool_By_Topic_And_Date", description = "Search for the conference list for exactly one topic provided and conference dates")
-    public Set<Conference> search(@ToolParam(description = "conference topic") String topic,
-    		@ToolParam(description = " the conference earliest start date") LocalDate earliestStartDate,
-    		@ToolParam(description = " the conference latest start date") LocalDate latestStartDate) {
-    	
-		System.out.println("search topic "+topic);
-		System.out.println("earliest start date "+earliestStartDate);
-		System.out.println("latest start date "+latestStartDate);
-		Set<Conference> foundConferences;		
-		foundConferences= this.conferences.stream()
-		.filter(c -> c.topics().contains(topic))
-		.filter(c -> c.startDate().isAfter(earliestStartDate) && c.startDate().isBefore(latestStartDate))
-		.collect(Collectors.toSet());
-		
-		System.out.println("return list of conferences: "+foundConferences);
+	@Tool(name = "Conference_Search_Tool_By_Topic_And_Date", description = "Search for the conference list for exactly one topic provided and conference dates")
+	public Set<Conference> search(@ToolParam(description = "conference topic") String topic,
+			@ToolParam(description = " the conference earliest start date") LocalDate earliestStartDate,
+			@ToolParam(description = " the conference latest start date") LocalDate latestStartDate) {
+
+		System.out.println("search topic " + topic);
+		System.out.println("earliest start date " + earliestStartDate);
+		System.out.println("latest start date " + latestStartDate);
+		Set<Conference> foundConferences;
+		foundConferences = this.conferences.stream().filter(c -> c.topics().contains(topic))
+				.filter(c -> c.startDate().isAfter(earliestStartDate) && c.startDate().isBefore(latestStartDate))
+				.collect(Collectors.toSet());
+
+		System.out.println("return list of conferences: " + foundConferences);
 		return foundConferences;
-	  }
-	
-	@Tool(name="Conference_Search_Tool_By_Topic", description = "Search for the conference list for exactly one topic provided")
-    public Set<Conference> search(@ToolParam(description = "conference topic") String topic) {
-		System.out.println("search topic "+topic);
-		Set<Conference> foundConferences;		
-		foundConferences= this.conferences.stream()
-		.filter(c -> c.topics().contains(topic))
-		.collect(Collectors.toSet());
-		
-	    System.out.println("return list of conferences: "+foundConferences);
+	}
+
+	@Tool(name = "Conference_Search_Tool_By_Topic", description = "Search for the conference list for exactly one topic provided")
+	public Set<Conference> search(@ToolParam(description = "conference topic") String topic) {
+		System.out.println("search topic " + topic);
+		Set<Conference> foundConferences;
+		foundConferences = this.conferences.stream().filter(c -> c.topics().contains(topic))
+				.collect(Collectors.toSet());
+
+		System.out.println("return list of conferences: " + foundConferences);
 		return foundConferences;
-	  }
-	
-	@Tool(name="All_Conference_Search_Tool", description = "Get the list of all conferences and answer questions about them")
-    public Set<Conference> searchAllConferences() {
+	}
+
+	@Tool(name = "All_Conference_Search_Tool", description = "Get the list of all conferences and answer questions about them")
+	public Set<Conference> searchAllConferences() {
 		System.out.println("Search for all conferences");
 		return this.conferences;
 	}
-	
+
 }

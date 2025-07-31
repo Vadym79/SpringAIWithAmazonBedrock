@@ -12,7 +12,7 @@
 	<artifactId>spring-mcp-conference-search</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spring-mcp-conference-search</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Spring MCP Conference Search Tool</description>
 	<url/>
 	<licenses>
 		<license/>

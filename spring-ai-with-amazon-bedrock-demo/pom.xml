@@ -12,7 +12,7 @@
 	<artifactId>spring-ai-with-amazon-bedrock-demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>demo</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Spring AI Demos with Amazon Bedrock LLMs</description>
 	<url/>
 	<licenses>
 		<license/>
