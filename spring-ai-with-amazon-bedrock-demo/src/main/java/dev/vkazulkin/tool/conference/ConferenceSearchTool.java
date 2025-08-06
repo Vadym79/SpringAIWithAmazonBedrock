@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,8 @@ import dev.vkazulkin.conference.Conferences;
 public class ConferenceSearchTool {
 
 	private final ObjectMapper objectMapper;
+	
+	private static final Logger logger = LoggerFactory.getLogger(ConferenceSearchTool.class);
 
 	public ConferenceSearchTool(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
@@ -33,23 +37,23 @@ public class ConferenceSearchTool {
     		@ToolParam(description = " the conference earliest start date") LocalDate earliestStartDate,
     		@ToolParam(description = " the conference latest start date") LocalDate latestStartDate) {
     	
-		System.out.println("search topic "+topic);
-		System.out.println("earliest start date "+earliestStartDate);
-		System.out.println("latest start date "+latestStartDate);
+		logger.info("search topic "+topic);
+		logger.info("earliest start date "+earliestStartDate);
+		logger.info("latest start date "+latestStartDate);
 		Set<Conference> foundConferences;		
 		foundConferences= this.getAllConferences().conferences().stream()
 		.filter(c -> c.topics().contains(topic))
 		.filter(c -> c.startDate().isAfter(earliestStartDate) && c.startDate().isBefore(latestStartDate))
 		.collect(Collectors.toSet());
 		
-		System.out.println("return list of conferences: "+foundConferences);
+		logger.info("return list of conferences: "+foundConferences);
 		return foundConferences;
 	  }
 	
 	
 	@Tool(name="All_Conference_Search_Tool", description = "Get the list of all conferences and answer questions about them")
     public Set<Conference> searchAllConferences() {
-		System.out.println("Search for all conferences");
+		logger.info("Search for all conferences");
 		return this.getAllConferences().conferences();
 	  }
 

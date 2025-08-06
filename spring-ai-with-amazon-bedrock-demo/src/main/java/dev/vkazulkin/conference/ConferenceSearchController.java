@@ -1,5 +1,7 @@
 package dev.vkazulkin.conference;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -12,12 +14,15 @@ import dev.vkazulkin.tool.zdt.ZonedDateTimeTool;
 import dev.vkazulkin.tool.conference.ConferenceSearchTool;
 import reactor.core.publisher.Flux;
 
+
 @RestController
-public class ConferenceSearchContoller {
+public class ConferenceSearchController {
 	
     private final ChatClient chatClient;
     private final ZonedDateTimeTool zonedDateTimeTool;
     private final ConferenceSearchTool conferenceSearchTool;
+    
+	private static final Logger logger = LoggerFactory.getLogger(ConferenceSearchController.class);
     
     private static final String SYSTEM_PROMPT="""
     		You are only able to answer questions about upcoming technical conferences. 
@@ -25,16 +30,16 @@ public class ConferenceSearchContoller {
     		please respond in the friendly manner that you're not able to provide this information.
     		""";
     
-    public ConferenceSearchContoller(ChatClient.Builder builder, ChatMemory chatMemory, 
+    public ConferenceSearchController(ChatClient.Builder builder, ChatMemory chatMemory, 
     		ZonedDateTimeTool zonedDateTimeTool, ConferenceSearchTool conferenceSearchTool) {
 		var options = ToolCallingChatOptions.builder()
 				 .model("amazon.nova-lite-v1:0")
-				 // .model("amazon.nova-pro-v1:0")
+				  //.model("amazon.nova-pro-v1:0")
 				  //.model("anthropic.claude-3-5-sonnet-20240620-v1:0")
 				 .maxTokens(2000).build();
 		
 		this.chatClient = builder
-				.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+				//.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
 				.defaultOptions(options)
 				//.defaultSystem(SYSTEM_PROMPT)
 				.build();
@@ -49,11 +54,11 @@ public class ConferenceSearchContoller {
     	final String USER_PROMPT= """
     			
     			1. Provide me with the best suggestions to apply for the talk for the {topic} conferences.
-    			2. The provided conference start date attribute should be within the next {number_of_months} months. 
+    			2. The provided conference start date attribute should be within the next {number_of_months} months starting from the current date and time. 
     			3. Please include the following conference info in the response only: name, topics, homepage, start and end date, city and call for papers link
     			""";
         return this.chatClient.prompt()
-        		 .system(s -> s.text(SYSTEM_PROMPT).param("topic", topic))
+        		 //.system(s -> s.text(SYSTEM_PROMPT).param("topic", topic))
         		.user(u -> u.text(USER_PROMPT).param("topic", topic).param("number_of_months", numOfMonths))
                 .tools(this.zonedDateTimeTool, this.conferenceSearchTool)
                 .stream()
