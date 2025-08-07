@@ -21,14 +21,14 @@ import dev.vkazulkin.conference.Conferences;
 
 @Component
 public class ConferenceSearchTool {
-
-	private final ObjectMapper objectMapper;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ConferenceSearchTool.class);
+	
+	private Set<Conference> conferences;
 
 	public ConferenceSearchTool(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
-		this.objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.registerModule(new JavaTimeModule());
+		this.conferences= this.getAllConferences(objectMapper).conferences();
 
 	}
 
@@ -40,8 +40,8 @@ public class ConferenceSearchTool {
 		logger.info("search topic "+topic);
 		logger.info("earliest start date "+earliestStartDate);
 		logger.info("latest start date "+latestStartDate);
-		Set<Conference> foundConferences;		
-		foundConferences= this.getAllConferences().conferences().stream()
+		
+		Set<Conference> foundConferences= this.conferences.stream()
 		.filter(c -> c.topics().contains(topic))
 		.filter(c -> c.startDate().isAfter(earliestStartDate) && c.startDate().isBefore(latestStartDate))
 		.collect(Collectors.toSet());
@@ -53,14 +53,14 @@ public class ConferenceSearchTool {
 	
 	@Tool(name="All_Conference_Search_Tool", description = "Get the list of all conferences and answer questions about them")
     public Set<Conference> searchAllConferences() {
-		logger.info("Search for all conferences");
-		return this.getAllConferences().conferences();
+		logger.info("Search for all conferences "+this.conferences);
+		return this.conferences;
 	  }
 
 	
-	private Conferences getAllConferences() {
+	private Conferences getAllConferences(ObjectMapper objectMapper) {
 		try (InputStream inputStream = TypeReference.class.getResourceAsStream("/conferences.json")) {
-			return this.objectMapper.readValue(inputStream, Conferences.class);
+			return objectMapper.readValue(inputStream, Conferences.class);
 		} 
 		catch(IOException ex) {
 			throw new RuntimeException("can't read conferences");

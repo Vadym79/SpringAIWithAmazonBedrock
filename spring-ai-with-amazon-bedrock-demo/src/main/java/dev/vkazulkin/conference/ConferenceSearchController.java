@@ -1,7 +1,6 @@
 package dev.vkazulkin.conference;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -19,10 +18,9 @@ import reactor.core.publisher.Flux;
 public class ConferenceSearchController {
 	
     private final ChatClient chatClient;
+    private final ChatMemory chatMemory;
     private final ZonedDateTimeTool zonedDateTimeTool;
     private final ConferenceSearchTool conferenceSearchTool;
-    
-	private static final Logger logger = LoggerFactory.getLogger(ConferenceSearchController.class);
     
     private static final String SYSTEM_PROMPT="""
     		You are only able to answer questions about upcoming technical conferences. 
@@ -38,8 +36,9 @@ public class ConferenceSearchController {
 				  //.model("anthropic.claude-3-5-sonnet-20240620-v1:0")
 				 .maxTokens(2000).build();
 		
+		this.chatMemory=chatMemory;
 		this.chatClient = builder
-				//.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+				.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
 				.defaultOptions(options)
 				//.defaultSystem(SYSTEM_PROMPT)
 				.build();
@@ -58,7 +57,7 @@ public class ConferenceSearchController {
     			3. Please include the following conference info in the response only: name, topics, homepage, start and end date, city and call for papers link
     			""";
         return this.chatClient.prompt()
-        		 //.system(s -> s.text(SYSTEM_PROMPT).param("topic", topic))
+        		 .system(s -> s.text(SYSTEM_PROMPT).param("topic", topic))
         		.user(u -> u.text(USER_PROMPT).param("topic", topic).param("number_of_months", numOfMonths))
                 .tools(this.zonedDateTimeTool, this.conferenceSearchTool)
                 .stream()
