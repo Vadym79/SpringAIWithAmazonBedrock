@@ -26,11 +26,8 @@ public class ConferenceSearchTool {
 
 	public ConferenceSearchTool(ObjectMapper objectMapper) {
 		objectMapper.registerModule(new JavaTimeModule());
-		try (InputStream inputStream = TypeReference.class.getResourceAsStream("/conferences.json")) {
-			conferences = objectMapper.readValue(inputStream, Conferences.class).conferences();
-		} catch (IOException ex) {
-			throw new RuntimeException("can't read conferences");
-		}
+		this.conferences= this.getAllConferences(objectMapper).conferences();
+
 	}
 
 	@Tool(name = "Conference_Search_Tool_By_Topic_And_Date", description = "Search for the conference list for exactly one topic provided and conference dates")
@@ -42,8 +39,7 @@ public class ConferenceSearchTool {
 		logger.info("earliest start date "+earliestStartDate);
 		logger.info("latest start date "+latestStartDate);
 		
-		Set<Conference> foundConferences;
-		foundConferences = this.conferences.stream().filter(c -> c.topics().contains(topic))
+		Set<Conference> foundConferences = this.conferences.stream().filter(c -> c.topics().contains(topic))
 				.filter(c -> c.startDate().isAfter(earliestStartDate) && c.startDate().isBefore(latestStartDate))
 				.collect(Collectors.toSet());
 
@@ -54,8 +50,7 @@ public class ConferenceSearchTool {
 	@Tool(name = "Conference_Search_Tool_By_Topic", description = "Search for the conference list for exactly one topic provided")
 	public Set<Conference> search(@ToolParam(description = "conference topic") String topic) {
 		logger.info("search topic " + topic);
-		Set<Conference> foundConferences;
-		foundConferences = this.conferences.stream().filter(c -> c.topics().contains(topic))
+		Set<Conference> foundConferences = this.conferences.stream().filter(c -> c.topics().contains(topic))
 				.collect(Collectors.toSet());
 
 		logger.info("return list of conferences: " + foundConferences);
@@ -66,5 +61,14 @@ public class ConferenceSearchTool {
 	public Set<Conference> searchAllConferences() {
 		logger.info("Search for all conferences");
 		return this.conferences;
+	}
+	
+	private Conferences getAllConferences(ObjectMapper objectMapper) {
+		try (InputStream inputStream = TypeReference.class.getResourceAsStream("/conferences.json")) {
+			return objectMapper.readValue(inputStream, Conferences.class);
+		} 
+		catch(IOException ex) {
+			throw new RuntimeException("can't read conferences");
+		}
 	}
 }
