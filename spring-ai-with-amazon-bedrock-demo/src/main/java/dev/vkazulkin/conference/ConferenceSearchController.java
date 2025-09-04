@@ -1,13 +1,18 @@
 package dev.vkazulkin.conference;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
 
 import dev.vkazulkin.tool.zdt.ZonedDateTimeTool;
 import dev.vkazulkin.tool.conference.ConferenceSearchTool;
@@ -21,6 +26,7 @@ public class ConferenceSearchController {
     private final ChatMemory chatMemory;
     private final ZonedDateTimeTool zonedDateTimeTool;
     private final ConferenceSearchTool conferenceSearchTool;
+	private static final Logger logger = LoggerFactory.getLogger(ConferenceSearchController.class);
     
     private static final String SYSTEM_PROMPT="""
     		You are only able to answer questions about upcoming technical conferences. 
@@ -64,8 +70,27 @@ public class ConferenceSearchController {
                 .content();
     }
     
+    
+    @GetMapping("/ping")
+    public String ping() {
+    	 return "{\"status\": \"healthy\"}";
+    }
+    
+    
+    @PostMapping(value="/invocations", consumes = {"*/*"})
+    public String invocations(@RequestBody String prompt) {
+       logger.info("invocations endpoint with prompt: "+prompt);
+       return this.chatClient.prompt()
+       		.user(prompt)
+               .tools(this.conferenceSearchTool)
+               .call()
+               .content();
+    }
+    
+    
     @GetMapping("/conference-search")
     public Flux<String> conferenceSearch(@RequestParam(value = "prompt") String prompt) {
+       logger.info("conference search endpoint with prompt: "+prompt);
        return this.chatClient.prompt()
         		.user(prompt)
                 .tools(this.conferenceSearchTool)
