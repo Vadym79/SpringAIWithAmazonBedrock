@@ -61,6 +61,9 @@ public class SpringAIAgentController {
 	
 	@Value("${cognito.auth.token.resource.server.id}")
 	private String RESOURCE_SERVER_ID;
+	
+	@Value("${amazon.bedrock.agentcore.gateway.url}")
+	private String AGENTCORE_GATEWAY_URL;
 
 	private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
 			.region(Region.US_EAST_1).build();
@@ -124,11 +127,10 @@ public class SpringAIAgentController {
 	}
 
 	private McpClientTransport getMcpClientTransport(String token) {
-		String endpoint = "https://demoamazonapigatewayordersrestapi-izazryhv8b.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp";
 		//String token = "eyJraWQiOiJ4Ynp0ZW5nVnBmdXVhRitzMVhmXC94OHRLczc4TFpsejEwSzJ6eXArOEZXYz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2Zjk5dXZnMDNkazNrbnVyc3ZzMWtvNW9kZSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoic2FtcGxlLWFnZW50Y29yZS1nYXRld2F5LWlkXC9nYXRld2F5OndyaXRlIHNhbXBsZS1hZ2VudGNvcmUtZ2F0ZXdheS1pZFwvZ2F0ZXdheTpyZWFkIiwiYXV0aF90aW1lIjoxNzU3MDY5ODY3LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV84dm5DbFEwbUQiLCJleHAiOjE3NTcwNzM0NjcsImlhdCI6MTc1NzA2OTg2NywidmVyc2lvbiI6MiwianRpIjoiOGM1ODg2YTctZDhiZS00NmRkLTgyZTItMjFjMTkyYzA2Zjg4IiwiY2xpZW50X2lkIjoiNmY5OXV2ZzAzZGsza251cnN2czFrbzVvZGUifQ.XM1dGwUZbUQnWMYTjcINGGecUHTO23euh-iSPfwm7-vN5fNmPp40L34s-yE2_ESU1qvG8_k6ghAWWHrowLfSRtynDHUNJ8hbdBv5Tn_Z4VWiRyDD9DsGfzepjOmGUuo3xP2GU-HIRtVEJhQLej7CjAs4ZX39XHAYp1PNigUSTOE-tkCQ5HPSeoZCvLeEVQztq1g-QHHq2cf0EXYsGd5nX6LVK9wjKSy0D89tkbaDaKB2DgiZyEgGAw60_-WZ3O8pVxw1KGtlz2AwPW7RmG9XWlf6DvfhOwxZdPDWXnzYnLHvtccBzFd2bWzhINfGImtM7q-sxBepeRTSOh73diuODA";
 		String headerValue = "Bearer " + token;
 		WebClient.Builder webClientBuilder = WebClient.builder().defaultHeader("Authorization", headerValue);
-		return WebClientStreamableHttpTransport.builder(webClientBuilder).endpoint(endpoint).build();
+		return WebClientStreamableHttpTransport.builder(webClientBuilder).endpoint(AGENTCORE_GATEWAY_URL).build();
 	}
 
 	private String getAuthToken() {
