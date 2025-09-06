@@ -99,15 +99,15 @@ public class SpringAIAgentController {
 	public String invoke(@RequestBody String prompt) {
 		logger.info("invocations endpoint with prompt: " + prompt);
 		String token = getAuthToken();
-		try (McpSyncClient client = McpClient.sync(getMcpClientTransport(token)).build()) {
+		try (var client = McpClient.sync(getMcpClientTransport(token)).build()) {
 			client.initialize();
-			McpSchema.ListToolsResult toolsResult = client.listTools();
-
-			for (McpSchema.Tool tool : toolsResult.tools()) {
+			
+			var toolsResult = client.listTools();
+			for (var tool : toolsResult.tools()) {
 				logger.info("tool found " + tool);
 			}
 
-			SyncMcpToolCallbackProvider syncMcpToolCallbackProvider = new SyncMcpToolCallbackProvider(client);
+			var syncMcpToolCallbackProvider = new SyncMcpToolCallbackProvider(client);
 
 			return this.chatClient.prompt().user(prompt).toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks())
 					.call().content();
@@ -128,17 +128,17 @@ public class SpringAIAgentController {
 		if(token == null) {
 			throw new RuntimeException("can't obtain authorization token");
 		}
-		McpAsyncClient client = McpClient.async(getMcpClientTransport(token)).build();
+		var client = McpClient.async(getMcpClientTransport(token)).build();
 		client.initialize();
-		Mono<McpSchema.ListToolsResult> toolsResult = client.listTools();
+		var toolsResult = client.listTools();
 
-		for (McpSchema.Tool tool : toolsResult.block().tools()) {
+		for (var tool : toolsResult.block().tools()) {
 			logger.info("tool found " + tool);
 		}
 
-		AsyncMcpToolCallbackProvider syncMcpToolCallbackProvider = new AsyncMcpToolCallbackProvider(client);
+		var syncMcpToolCallbackProvider = new AsyncMcpToolCallbackProvider(client);
 
-		Flux<String> content = this.chatClient.prompt().user(prompt)
+		var content = this.chatClient.prompt().user(prompt)
 				.toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks()).stream().content();
 
 		client.close();
@@ -152,7 +152,7 @@ public class SpringAIAgentController {
 	 */
 	private McpClientTransport getMcpClientTransport(String token) {
 		String headerValue = "Bearer " + token;
-		WebClient.Builder webClientBuilder = WebClient.builder().defaultHeader("Authorization", headerValue);
+		var webClientBuilder = WebClient.builder().defaultHeader("Authorization", headerValue);
 		return WebClientStreamableHttpTransport.builder(webClientBuilder).endpoint(AGENTCORE_GATEWAY_URL).build();
 	}
 
@@ -161,28 +161,28 @@ public class SpringAIAgentController {
 	 * @return authorization token
 	 */
 	private String getAuthToken() {
-		UserPoolDescriptionType userPool = getUserPool();
+		var userPool = getUserPool();
 		logger.info("user pool " + userPool);
 		if(userPool == null) {
 			throw new RuntimeException("cognito user pool with the name "+USER_POOL_NAME+ " is not found");
 		}
-		UserPoolClientDescription userPoolClient = getUserPoolClient(userPool);
+		var userPoolClient = getUserPoolClient(userPool);
 		logger.info("user pool " + userPoolClient);
 		
 		if(userPoolClient == null) {
 			throw new RuntimeException("cognito user pool client with the name "+USER_POOL_CLIENT_NAME+ " is not found");
 		}
 
-		UserPoolClientType userPoolClientType = describeUserPoolClient(userPoolClient);
+		var userPoolClientType = describeUserPoolClient(userPoolClient);
 
 		logger.info("user pool client type " + userPoolClientType);
 		
 		if(userPoolClientType == null) {
 			throw new RuntimeException("cognito user client type for the client "+USER_POOL_CLIENT_NAME+ " is not found");
 		}
-		String userPoolId = userPool.id();
+		var userPoolId = userPool.id();
 		userPoolId = userPoolId.replace("_", "");
-		String url = "https://" + userPoolId + ".auth." + Region.US_EAST_1.id() + ".amazoncognito.com/oauth2/token";
+		var url = "https://" + userPoolId + ".auth." + Region.US_EAST_1.id() + ".amazoncognito.com/oauth2/token";
 		logger.info("url: " + url);
 
 		String SCOPE_STRING = RESOURCE_SERVER_ID + "/gateway:read " + RESOURCE_SERVER_ID
@@ -192,19 +192,17 @@ public class SpringAIAgentController {
 				+ "client_secret=" + userPoolClientType.clientSecret() + "&" + "scope=" + SCOPE_STRING;
 
 		logger.info("entity " + entity);
-		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-			ClassicHttpRequest httpPost = ClassicRequestBuilder.post(url)
+		try (var httpClient = HttpClients.createDefault()) {
+			var httpPost = ClassicRequestBuilder.post(url)
 					.setHeader("Content-Type", "application/x-www-form-urlencoded").setEntity(entity).build();
 
-			CloseableHttpResponse response = httpClient.execute(httpPost);
-			InputStream inputStream = response.getEntity().getContent();
-			String responseString = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+			var response = httpClient.execute(httpPost);
+			var inputStream = response.getEntity().getContent();
+			var responseString = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 			logger.info("response: " + responseString);
 
-			Map<String, Object> responseMap = mapper.readValue(responseString,
-					new TypeReference<Map<String, Object>>() {
-					});
-			String token = (String) responseMap.get("access_token");
+			var responseMap = mapper.readValue(responseString,new TypeReference<Map<String, Object>>() {});
+			var token = (String) responseMap.get("access_token");
 			logger.info("token : " + token);
 			return token;
 		} catch (IOException e) {
@@ -219,10 +217,9 @@ public class SpringAIAgentController {
 	 */
 	private UserPoolDescriptionType getUserPool() {
 		try {
-			ListUserPoolsRequest request = ListUserPoolsRequest.builder().maxResults(10).build();
-
-			ListUserPoolsResponse response = cognitoClient.listUserPools(request);
-			for (UserPoolDescriptionType userPool : response.userPools()) {
+			var request = ListUserPoolsRequest.builder().maxResults(10).build();
+			var response = cognitoClient.listUserPools(request);
+			for (var userPool : response.userPools()) {
 				logger.info("User pool " + userPool.name() + ", User ID " + userPool.id());
 				if (userPool.name().equals(USER_POOL_NAME)) {
 					return userPool;
@@ -242,11 +239,11 @@ public class SpringAIAgentController {
 	 */
 	private UserPoolClientDescription getUserPoolClient(UserPoolDescriptionType userPool) {
 		try {
-			ListUserPoolClientsRequest request = ListUserPoolClientsRequest.builder().userPoolId(userPool.id())
+			var request = ListUserPoolClientsRequest.builder().userPoolId(userPool.id())
 					.maxResults(10).build();
 
-			ListUserPoolClientsResponse response = cognitoClient.listUserPoolClients(request);
-			for (UserPoolClientDescription userPoolClient : response.userPoolClients()) {
+			var response = cognitoClient.listUserPoolClients(request);
+			for (var userPoolClient : response.userPoolClients()) {
 				logger.info("User Pool Client Name " + userPoolClient.clientName() + ", User Pool Client ID "
 						+ userPoolClient.clientId());
 				if (userPoolClient.clientName().equals(USER_POOL_CLIENT_NAME)) {
@@ -265,10 +262,10 @@ public class SpringAIAgentController {
 	 * @return cognito user pool client type for the given cognito user pool client
 	 */
 	private static UserPoolClientType describeUserPoolClient(UserPoolClientDescription userPoolClient) {
-		DescribeUserPoolClientRequest request = DescribeUserPoolClientRequest.builder()
+		var request = DescribeUserPoolClientRequest.builder()
 				.userPoolId(userPoolClient.userPoolId()).clientId(userPoolClient.clientId()).build();
-		DescribeUserPoolClientResponse response = cognitoClient.describeUserPoolClient(request);
-		Optional<UserPoolClientType> optionalType = response.getValueForField("UserPoolClient",
+		var response = cognitoClient.describeUserPoolClient(request);
+		var optionalType = response.getValueForField("UserPoolClient",
 				UserPoolClientType.class);
 		if(optionalType.isEmpty()) {
 			return null;
