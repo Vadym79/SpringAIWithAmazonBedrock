@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.bedrockagentcore.model.InvokeAgentRuntime
 
 public class InvokeRuntimeAgent {
 
-	private static final String AGENT_RUNTIME_ARN="arn:aws:bedrock-agentcore:us-east-1:265634257610:runtime/agentcore_runtime_spring_ai_demo-tD7f1W6RGi";
+	private static final String AGENT_RUNTIME_ARN="{AGENTCORE_RUNTIME_ARN}";
 	
 	public static void main(String[] args) throws Exception {
 

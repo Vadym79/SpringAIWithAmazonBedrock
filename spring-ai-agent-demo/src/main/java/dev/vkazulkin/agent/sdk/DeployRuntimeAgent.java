@@ -12,13 +12,12 @@ import software.amazon.awssdk.services.bedrockagentcorecontrol.model.NetworkMode
 
 
 public class DeployRuntimeAgent {
-
 	
-	private static final String IAM_ROLE_ARN="arn:aws:iam::265634257610:role/service-role/AmazonBedrockAgentCoreRuntimeDefaultServiceRole-q8xp1";
-	private static final String CONTAINER_URI="265634257610.dkr.ecr.us-east-1.amazonaws.com/agentcore-runtime-spring-ai-demo"; 
+	private static final String IAM_ROLE_ARN="{IAM_ARN_ROLE}";
+	private static final String CONTAINER_URI="{AWS_ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/{ECR_REPO}"; 
 	
-	private static final String CREATE_AGENT_RUNTIME_CONTAINER_URI=CONTAINER_URI+":v1";
-	private static final String UPDATE_AGENT_RUNTIME_CONTAINER_URI=CONTAINER_URI+":v14";
+	private static final String CREATE_AGENT_RUNTIME_CONTAINER_URI=CONTAINER_URI+":v1";  //change to your version schema
+	private static final String UPDATE_AGENT_RUNTIME_CONTAINER_URI=CONTAINER_URI+":v14"; //change to your version schema
 	
 	private static final BedrockAgentCoreControlClient bedrockAgentCoreControlClient = BedrockAgentCoreControlClient.builder().region(Region.US_EAST_1)
 			.build();
