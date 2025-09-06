@@ -2,16 +2,15 @@ package dev.vkazulkin.agent.sdk;
 
 import java.nio.charset.StandardCharsets;
 
-import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockagentcore.BedrockAgentCoreClient;
 import software.amazon.awssdk.services.bedrockagentcore.model.InvokeAgentRuntimeRequest;
-import software.amazon.awssdk.services.bedrockagentcore.model.InvokeAgentRuntimeResponse;
+
 
 public class InvokeRuntimeAgent {
 
-	private static final String AGENT_RUNTIME_ARN="{AGENTCORE_RUNTIME_ARN}";
+	private static final String AGENT_RUNTIME_ARN="arn:aws:bedrock-agentcore:us-east-1:265634257610:runtime/agentcore_runtime_spring_ai_demo-tD7f1W6RGi";
 	
 	public static void main(String[] args) throws Exception {
 
@@ -19,12 +18,12 @@ public class InvokeRuntimeAgent {
 		BedrockAgentCoreClient bedrockAgentCoreClient = BedrockAgentCoreClient.builder().region(Region.US_EAST_1)
 				.build();
 
-		InvokeAgentRuntimeRequest invokeAgentRuntimeRequest = InvokeAgentRuntimeRequest.builder()
+		var invokeAgentRuntimeRequest = InvokeAgentRuntimeRequest.builder()
 				.agentRuntimeArn(AGENT_RUNTIME_ARN)
 				.qualifier("DEFAULT").contentType("application/json").payload(SdkBytes.fromUtf8String(payload)).build();
-		try (ResponseInputStream<InvokeAgentRuntimeResponse> responseStream = bedrockAgentCoreClient
+		try (var responseStream = bedrockAgentCoreClient
 				.invokeAgentRuntime(invokeAgentRuntimeRequest)) {
-			String text = new String(responseStream.readAllBytes(), StandardCharsets.UTF_8);
+			var text = new String(responseStream.readAllBytes(), StandardCharsets.UTF_8);
 
 			System.out.println(text);
 		}
