@@ -157,7 +157,6 @@ public class SpringAIAgentController {
 	 * @return authorization token
 	 */
 	private String getAuthToken() {
-
 		UserPoolDescriptionType userPool = getUserPool();
 		logger.info("user pool " + userPool);
 		UserPoolClientDescription userPoolClient = getUserPoolClient(userPool);
@@ -194,6 +193,7 @@ public class SpringAIAgentController {
 			logger.info("token : " + token);
 			return token;
 		} catch (IOException e) {
+			logger.error("error occured with the message: ", e.getMessage());
 		}
 		return null;
 	}
@@ -215,7 +215,7 @@ public class SpringAIAgentController {
 			}
 
 		} catch (CognitoIdentityProviderException e) {
-
+			logger.error("error occured with the message: ", e.getMessage());
 		}
 		return null;
 	}
@@ -239,7 +239,7 @@ public class SpringAIAgentController {
 				}
 			}
 		} catch (CognitoIdentityProviderException e) {
-
+			logger.error("error occured with the message: ", e.getMessage());
 		}
 		return null;
 	}
