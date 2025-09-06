@@ -124,6 +124,10 @@ public class SpringAIAgentController {
 		logger.info("invocations endpoint with prompt: " + prompt);
 
 		String token = getAuthToken();
+	
+		if(token == null) {
+			throw new RuntimeException("can't obtain authorization token");
+		}
 		McpAsyncClient client = McpClient.async(getMcpClientTransport(token)).build();
 		client.initialize();
 		Mono<McpSchema.ListToolsResult> toolsResult = client.listTools();
@@ -159,12 +163,23 @@ public class SpringAIAgentController {
 	private String getAuthToken() {
 		UserPoolDescriptionType userPool = getUserPool();
 		logger.info("user pool " + userPool);
+		if(userPool == null) {
+			throw new RuntimeException("cognito user pool with the name "+USER_POOL_NAME+ " is not found");
+		}
 		UserPoolClientDescription userPoolClient = getUserPoolClient(userPool);
 		logger.info("user pool " + userPoolClient);
+		
+		if(userPoolClient == null) {
+			throw new RuntimeException("cognito user pool client with the name "+USER_POOL_CLIENT_NAME+ " is not found");
+		}
 
 		UserPoolClientType userPoolClientType = describeUserPoolClient(userPoolClient);
 
 		logger.info("user pool client type " + userPoolClientType);
+		
+		if(userPoolClientType == null) {
+			throw new RuntimeException("cognito user client type for the client "+USER_POOL_CLIENT_NAME+ " is not found");
+		}
 		String userPoolId = userPool.id();
 		userPoolId = userPoolId.replace("_", "");
 		String url = "https://" + userPoolId + ".auth." + Region.US_EAST_1.id() + ".amazoncognito.com/oauth2/token";
@@ -255,6 +270,9 @@ public class SpringAIAgentController {
 		DescribeUserPoolClientResponse response = cognitoClient.describeUserPoolClient(request);
 		Optional<UserPoolClientType> optionalType = response.getValueForField("UserPoolClient",
 				UserPoolClientType.class);
+		if(optionalType.isEmpty()) {
+			return null;
+		}
 		return optionalType.get();
 	}
 }
