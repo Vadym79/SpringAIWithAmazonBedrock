@@ -1,4 +1,4 @@
-package dev.vkazulkin;
+package dev.vkazulkin.agent.controller;
 
 import io.modelcontextprotocol.client.McpAsyncClient;
 
@@ -80,11 +80,21 @@ public class SpringAIAgentController {
 				.build();
 	}
 
+	/** agrentcore runtime ping endpoint
+	 * 
+	 * @return health status
+	 */
 	@GetMapping("/ping")
 	public String ping() {
 		return "{\"status\": \"healthy\"}";
 	}
 
+	
+	/** returns synchronous agent answer
+	 * 
+	 * @param prompt - prompt 
+	 * @return agent answer
+	 */
 	@PostMapping(value = "/invocationss", consumes = { "*/*" })
 	public String invoke(@RequestBody String prompt) {
 		logger.info("invocations endpoint with prompt: " + prompt);
@@ -104,6 +114,11 @@ public class SpringAIAgentController {
 		}
 	}
 
+	/**
+	 * public post agentcore runtime endpoint to receive agent requests
+	 * @param prompt - prompt
+	 * @return asynchronous agent answer
+	 */
 	@PostMapping(value = "/invocations", consumes = { "*/*" })
 	public Flux<String> invocations(@RequestBody String prompt) {
 		logger.info("invocations endpoint with prompt: " + prompt);
@@ -126,6 +141,11 @@ public class SpringAIAgentController {
 		return content;
 	}
 
+	/** returns streamable http mcp client transport
+	 * 
+	 * @param token  -bearer authorization token
+	 * @return streamable http mcp client transport
+	 */
 	private McpClientTransport getMcpClientTransport(String token) {
 		//String token = "eyJraWQiOiJ4Ynp0ZW5nVnBmdXVhRitzMVhmXC94OHRLczc4TFpsejEwSzJ6eXArOEZXYz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2Zjk5dXZnMDNkazNrbnVyc3ZzMWtvNW9kZSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoic2FtcGxlLWFnZW50Y29yZS1nYXRld2F5LWlkXC9nYXRld2F5OndyaXRlIHNhbXBsZS1hZ2VudGNvcmUtZ2F0ZXdheS1pZFwvZ2F0ZXdheTpyZWFkIiwiYXV0aF90aW1lIjoxNzU3MDY5ODY3LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV84dm5DbFEwbUQiLCJleHAiOjE3NTcwNzM0NjcsImlhdCI6MTc1NzA2OTg2NywidmVyc2lvbiI6MiwianRpIjoiOGM1ODg2YTctZDhiZS00NmRkLTgyZTItMjFjMTkyYzA2Zjg4IiwiY2xpZW50X2lkIjoiNmY5OXV2ZzAzZGsza251cnN2czFrbzVvZGUifQ.XM1dGwUZbUQnWMYTjcINGGecUHTO23euh-iSPfwm7-vN5fNmPp40L34s-yE2_ESU1qvG8_k6ghAWWHrowLfSRtynDHUNJ8hbdBv5Tn_Z4VWiRyDD9DsGfzepjOmGUuo3xP2GU-HIRtVEJhQLej7CjAs4ZX39XHAYp1PNigUSTOE-tkCQ5HPSeoZCvLeEVQztq1g-QHHq2cf0EXYsGd5nX6LVK9wjKSy0D89tkbaDaKB2DgiZyEgGAw60_-WZ3O8pVxw1KGtlz2AwPW7RmG9XWlf6DvfhOwxZdPDWXnzYnLHvtccBzFd2bWzhINfGImtM7q-sxBepeRTSOh73diuODA";
 		String headerValue = "Bearer " + token;
@@ -133,6 +153,10 @@ public class SpringAIAgentController {
 		return WebClientStreamableHttpTransport.builder(webClientBuilder).endpoint(AGENTCORE_GATEWAY_URL).build();
 	}
 
+	/**
+	 * returns authorization token required by the mcp client
+	 * @return authorization token
+	 */
 	private String getAuthToken() {
 
 		UserPoolDescriptionType userPool = getUserPool();
@@ -175,6 +199,10 @@ public class SpringAIAgentController {
 		return null;
 	}
 
+	/** returns cognito user pool with specific user name
+	 * 
+	 * @return cognito user pool with specific user name
+	 */
 	private UserPoolDescriptionType getUserPool() {
 		try {
 			ListUserPoolsRequest request = ListUserPoolsRequest.builder().maxResults(10).build();
@@ -193,6 +221,11 @@ public class SpringAIAgentController {
 		return null;
 	}
 
+	/**returns cognito user pool client for the given cognito user pool
+	 * 
+	 * @param userPool - cognito user pool 
+	 * @return cognito user pool client for the given cognito user pool
+	 */
 	private UserPoolClientDescription getUserPoolClient(UserPoolDescriptionType userPool) {
 		try {
 			ListUserPoolClientsRequest request = ListUserPoolClientsRequest.builder().userPoolId(userPool.id())
@@ -212,6 +245,11 @@ public class SpringAIAgentController {
 		return null;
 	}
 
+	/** returns cognito user pool client type for the given cognito user pool client
+	 * 
+	 * @param userPoolClient- cognito user pool client
+	 * @return cognito user pool client type for the given cognito user pool client
+	 */
 	private static UserPoolClientType describeUserPoolClient(UserPoolClientDescription userPoolClient) {
 		DescribeUserPoolClientRequest request = DescribeUserPoolClientRequest.builder()
 				.userPoolId(userPoolClient.userPoolId()).clientId(userPoolClient.clientId()).build();
