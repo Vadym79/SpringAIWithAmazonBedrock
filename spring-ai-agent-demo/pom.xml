@@ -12,8 +12,8 @@
 	<groupId>dev.vkazulkin</groupId>
 	<artifactId>spring-ai-agent-demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-mcp-conference-search</name>
-	<description>Spring MCP Conference Search Tool</description>
+	<name>spring-ai-agent-demo</name>
+	<description>Spring AI Agent Denmo</description>
 	<url />
 	<licenses>
 		<license />
