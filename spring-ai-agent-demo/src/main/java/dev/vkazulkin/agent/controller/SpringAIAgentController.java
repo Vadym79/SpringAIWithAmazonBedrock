@@ -128,10 +128,10 @@ public class SpringAIAgentController {
 			logger.info("tool found " + tool);
 		}
 
-		var syncMcpToolCallbackProvider = new AsyncMcpToolCallbackProvider(client);
+		var asyncMcpToolCallbackProvider = new AsyncMcpToolCallbackProvider(client);
 
 		var content = this.chatClient.prompt().user(prompt)
-				.toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks()).stream().content();
+				.toolCallbacks(asyncMcpToolCallbackProvider.getToolCallbacks()).stream().content();
 
 		client.close();
 		return content;
