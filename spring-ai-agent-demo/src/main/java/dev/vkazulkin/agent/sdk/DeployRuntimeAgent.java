@@ -19,12 +19,15 @@ public class DeployRuntimeAgent {
 	private static final String CREATE_AGENT_RUNTIME_CONTAINER_URI=CONTAINER_URI+":v1";  //change to your version schema
 	private static final String UPDATE_AGENT_RUNTIME_CONTAINER_URI=CONTAINER_URI+":v14"; //change to your version schema
 	
+	private static final String AGENT_RUNTIME_NAME="{AGENT_RUNTIME_NAME}";
+	private static final String AGENT_RUNTIME_ID="{AGENT_RUNTIME_ID}";
+	
 	private static final BedrockAgentCoreControlClient bedrockAgentCoreControlClient = BedrockAgentCoreControlClient.builder().region(Region.US_EAST_1)
 			.build();
 	
 	private static void createAgentRuntime() {
 		var request= CreateAgentRuntimeRequest.builder()
-				 .agentRuntimeName("agentcore_runtime_spring_ai_demo")
+				 .agentRuntimeName(AGENT_RUNTIME_NAME)
 				 .roleArn(IAM_ROLE_ARN)
 				 .networkConfiguration(NetworkConfiguration.builder().networkMode(NetworkMode.PUBLIC).build())
 				 .agentRuntimeArtifact(AgentArtifact.fromContainerConfiguration(
@@ -36,7 +39,7 @@ public class DeployRuntimeAgent {
 	
 	private static void updateAgentRuntime() {
 		var request= UpdateAgentRuntimeRequest.builder()
-				 .agentRuntimeId("agentcore_runtime_spring_ai_demo-tD7f1W6RGi")
+				 .agentRuntimeId(AGENT_RUNTIME_ID)
 				 .roleArn(IAM_ROLE_ARN)
 				 .networkConfiguration(NetworkConfiguration.builder().networkMode(NetworkMode.PUBLIC).build())
 				  .agentRuntimeArtifact(AgentArtifact.fromContainerConfiguration(
