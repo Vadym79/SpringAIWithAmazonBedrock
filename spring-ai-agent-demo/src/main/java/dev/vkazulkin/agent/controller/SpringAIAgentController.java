@@ -154,19 +154,35 @@ public class SpringAIAgentController {
 	 */
 	private String getAuthToken() {
 		var userPool = getUserPool();
+		logger.info("user pool " + userPool);
+		if(userPool == null) {
+			throw new RuntimeException("cognito user pool with the name "+USER_POOL_NAME+ " is not found");
+		}
 		var userPoolClient = getUserPoolClient(userPool);
-		var userPoolClientType = describeUserPoolClient(userPoolClient);	
+		logger.info("user pool " + userPoolClient);
+		
+		if(userPoolClient == null) {
+			throw new RuntimeException("cognito user pool client with the name "+USER_POOL_CLIENT_NAME+ " is not found");
+		}
+
+		var userPoolClientType = describeUserPoolClient(userPoolClient);
+		logger.info("user pool client type " + userPoolClientType);
+		
+		if(userPoolClientType == null) {
+			throw new RuntimeException("cognito user client type for the client "+USER_POOL_CLIENT_NAME+ " is not found");
+		}
 		var userPoolId = userPool.id();
 		userPoolId = userPoolId.replace("_", "");
-		
 		var url = "https://" + userPoolId + ".auth." + Region.US_EAST_1.id() + ".amazoncognito.com/oauth2/token";
-	
+		logger.info("url: " + url);
+
 		String SCOPE_STRING = RESOURCE_SERVER_ID + "/gateway:read " + RESOURCE_SERVER_ID
 				+ "/gateway:write";
 
 		String entity = "grant_type=client_credentials&" + "client_id=" + userPoolClientType.clientId() + "&"
 				+ "client_secret=" + userPoolClientType.clientSecret() + "&" + "scope=" + SCOPE_STRING;
 
+		logger.info("entity " + entity);
 		try (var httpClient = HttpClients.createDefault()) {
 			var httpPost = ClassicRequestBuilder.post(url)
 					.setHeader("Content-Type", "application/x-www-form-urlencoded").setEntity(entity).build();
@@ -174,9 +190,11 @@ public class SpringAIAgentController {
 			var response = httpClient.execute(httpPost);
 			var inputStream = response.getEntity().getContent();
 			var responseString = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-	
+			logger.info("response: " + responseString);
+
 			var responseMap = mapper.readValue(responseString,new TypeReference<Map<String, Object>>() {});
 			var token = (String) responseMap.get("access_token");
+			logger.info("token : " + token);
 			return token;
 		} catch (IOException e) {
 			logger.error("error occured with the message: ", e.getMessage());
