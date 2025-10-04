@@ -154,21 +154,11 @@ public class SpringAIAgentController {
 	 */
 	private String getAuthToken() {
 		var userPool = getUserPool();
-		if(userPool == null) {
-			throw new RuntimeException("cognito user pool with the name "+USER_POOL_NAME+ " is not found");
-		}
 		var userPoolClient = getUserPoolClient(userPool);
-		
-		if(userPoolClient == null) {
-			throw new RuntimeException("cognito user pool client with the name "+USER_POOL_CLIENT_NAME+ " is not found");
-		}
-
 		var userPoolClientType = describeUserPoolClient(userPoolClient);	
-		if(userPoolClientType == null) {
-			throw new RuntimeException("cognito user client type for the client "+USER_POOL_CLIENT_NAME+ " is not found");
-		}
 		var userPoolId = userPool.id();
 		userPoolId = userPoolId.replace("_", "");
+		
 		var url = "https://" + userPoolId + ".auth." + Region.US_EAST_1.id() + ".amazoncognito.com/oauth2/token";
 	
 		String SCOPE_STRING = RESOURCE_SERVER_ID + "/gateway:read " + RESOURCE_SERVER_ID
