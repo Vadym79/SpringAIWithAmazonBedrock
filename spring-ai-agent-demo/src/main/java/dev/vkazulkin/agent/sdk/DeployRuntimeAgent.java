@@ -22,8 +22,8 @@ public class DeployRuntimeAgent {
 	private static final String AGENT_RUNTIME_NAME="{AGENT_RUNTIME_NAME}";
 	private static final String AGENT_RUNTIME_ID="{AGENT_RUNTIME_ID}";
 	
-	private static final BedrockAgentCoreControlClient bedrockAgentCoreControlClient = BedrockAgentCoreControlClient.builder().region(Region.US_EAST_1)
-			.build();
+	private static final BedrockAgentCoreControlClient bedrockAgentCoreControlClient = 
+			 BedrockAgentCoreControlClient.builder().region(Region.US_EAST_1).build();
 	
 	private static void createAgentRuntime() {
 		var request= CreateAgentRuntimeRequest.builder()
