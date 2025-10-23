@@ -13,6 +13,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.mcp.AsyncMcpToolCallbackProvider;
+import org.springframework.ai.mcp.McpToolFilter;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.WebClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpClientTransport;
+import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.regions.Region;
@@ -123,12 +125,15 @@ public class SpringAIAgentController {
 		var client = McpClient.async(getMcpClientTransport(token)).build();
 		client.initialize();
 		var toolsResult = client.listTools();
-
+		
 		for (var tool : toolsResult.block().tools()) {
 			logger.info("tool found " + tool);
 		}
-
-		var asyncMcpToolCallbackProvider = new AsyncMcpToolCallbackProvider(client);
+		
+		
+		var asyncMcpToolCallbackProvider = AsyncMcpToolCallbackProvider
+				.builder().mcpClients(client)
+				.build();
 
 		var content = this.chatClient.prompt().user(prompt)
 				.toolCallbacks(asyncMcpToolCallbackProvider.getToolCallbacks()).stream().content();
