@@ -13,6 +13,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.mcp.AsyncMcpToolCallbackProvider;
+import org.springframework.ai.mcp.McpConnectionInfo;
 import org.springframework.ai.mcp.McpToolFilter;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
@@ -31,6 +32,7 @@ import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.WebClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpClientTransport;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
+import io.modelcontextprotocol.spec.McpSchema.Tool;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.regions.Region;
@@ -130,9 +132,16 @@ public class SpringAIAgentController {
 			logger.info("tool found " + tool);
 		}
 		
-		
 		var asyncMcpToolCallbackProvider = AsyncMcpToolCallbackProvider
 				.builder().mcpClients(client)
+				 /*
+				.toolFilter(new McpToolFilter() {	
+					@Override
+					public boolean test(McpConnectionInfo info, Tool tool) {
+						return tool.name().toLowerCase().contains("order");
+					}
+				})
+				*/
 				.build();
 
 		var content = this.chatClient.prompt().user(prompt)
