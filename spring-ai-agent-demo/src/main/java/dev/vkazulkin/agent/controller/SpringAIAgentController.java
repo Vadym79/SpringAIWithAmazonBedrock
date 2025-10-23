@@ -120,7 +120,6 @@ public class SpringAIAgentController {
 		logger.info("invocations endpoint with prompt: " + prompt);
 
 		String token = getAuthToken();
-	
 		if(token == null) {
 			throw new RuntimeException("can't obtain authorization token");
 		}
