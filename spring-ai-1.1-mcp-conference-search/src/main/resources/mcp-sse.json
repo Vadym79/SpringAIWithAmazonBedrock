@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "conference-search-tool-sse": {
+	   "url": "http://localhost:8081/sse",
+	    "disabled": false,
+	    "timeout": 60000
+	 }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "conference-search-tool": {
+      "command": "java",
+      "args": [
+        "-jar",
+        "C:\\source-code-java\\SpringAIWithAmazonBedrock\\spring-mcp-conference-search\\target\\spring-mcp-conference-search-0.0.1-SNAPSHOT.jar"
+      ]
+    }
+  }
+}
