@@ -125,7 +125,6 @@ public class SpringAIAgentController {
 		}
 		var client = McpClient.async(getMcpClientTransport(token)).build();
 		client.initialize();
-		logger.info("before invoking tools");
 		var toolsResult = client.listTools();
 		for (var tool : toolsResult.block().tools()) {
 			logger.info("tool found " + tool);
@@ -146,7 +145,7 @@ public class SpringAIAgentController {
 		var content = this.chatClient.prompt().user(prompt)
 				.toolCallbacks(asyncMcpToolCallbackProvider.getToolCallbacks()).stream().content();
 
-		client.close();
+		//client.close();
 		return content;
 	}
 
