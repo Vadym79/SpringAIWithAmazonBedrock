@@ -103,7 +103,7 @@ public class SpringAIAgentController {
 				logger.info("tool found " + tool);
 			}
 
-			var syncMcpToolCallbackProvider = new SyncMcpToolCallbackProvider(client);
+			var syncMcpToolCallbackProvider = SyncMcpToolCallbackProvider.builder().mcpClients(client).build();
 
 			return this.chatClient.prompt().user(prompt).toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks())
 					.call().content();
