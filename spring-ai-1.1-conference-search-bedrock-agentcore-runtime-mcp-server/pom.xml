@@ -44,7 +44,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.ai</groupId>
-			<artifactId>spring-ai-starter-mcp-server-webflux</artifactId>
+			<artifactId>spring-ai-starter-mcp-server-webmvc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -55,7 +55,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!--
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>bedrockagentcore</artifactId>
@@ -64,7 +63,6 @@
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>bedrockagentcorecontrol</artifactId>
 		</dependency>
-		-->
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
