@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "conference-search-tool-streamable-http": {
-	   "url": "http://localhost:8081/mcp",
-	    "disabled": false,
-	    "timeout": 60000
-	 }
-  }
-}
