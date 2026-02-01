@@ -52,13 +52,14 @@ public class SpringAIAgentController {
 	@Value("${aws.account.id}")
 	private String AWS_ACCOUNT_ID;
 	
-	private static final String SECRET_NAME = "CognitoUserAndPasswordForAuthToken";
+	@Value("${secrets.manager.secret.name}")
+	private String SECRET_NAME;
 
-	private final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
+	private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
 			.region(Region.US_EAST_1).build();
 
 	// Create a Secrets Manager client
-	private final SecretsManagerClient client = SecretsManagerClient.builder().region(Region.US_EAST_1).build();
+	private static final SecretsManagerClient client = SecretsManagerClient.builder().region(Region.US_EAST_1).build();
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -209,7 +210,7 @@ public class SpringAIAgentController {
 	 */
 	private String getAuthToken(String clientId) {
 		try {
-			Credentials credentials=getSecret();
+			var credentials=getCredentials();
 			var initiateAuthRequest = InitiateAuthRequest
 					.builder().authFlow(AuthFlowType.USER_PASSWORD_AUTH).clientId(clientId)
 					.authParameters(Map
@@ -229,7 +230,7 @@ public class SpringAIAgentController {
 	 * 
 	 * @return credentials for getting the auth token from cognito
 	 */
-	private Credentials getSecret() throws Exception {
+	private Credentials getCredentials() throws Exception {
 		var getSecretValueRequest = GetSecretValueRequest.builder().secretId(SECRET_NAME).build();
 		var getSecretValueResponse = client.getSecretValue(getSecretValueRequest);
 
