@@ -111,6 +111,7 @@ public class SpringAIAgentController   {
 				.maxTokens(2000).build();
 
 		// auto-discovery of the long-term memory
+		logger.info(" initialize STM+LTM "+agentCoreMemory);
 		this.chatClient = builder
 				.defaultAdvisors(agentCoreMemory.advisors)	
 				.defaultOptions(options)
