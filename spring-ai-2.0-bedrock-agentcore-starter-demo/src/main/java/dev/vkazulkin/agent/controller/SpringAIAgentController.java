@@ -72,6 +72,14 @@ public class SpringAIAgentController   {
 	private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
 			.region(Region.US_EAST_1).build();
 
+	
+
+	/** Constructor for initializing short-term memory
+	 * 
+	 * @param builder
+	 * @param chatMemory
+	 */
+	/**
 	public SpringAIAgentController(ChatClient.Builder builder, ChatMemory chatMemory) {
 		var options = ToolCallingChatOptions.builder()
 				 //.model("amazon.nova-lite-v1:0")
@@ -80,7 +88,31 @@ public class SpringAIAgentController   {
 				.maxTokens(2000).build();
 
 		this.chatClient = builder
+				 // auto-discovery of the short-term memory
 				.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())	
+				.defaultOptions(options)
+				// .defaultSystem(SYSTEM_PROMPT)
+				.build();
+	}
+	*/
+	
+
+	/**
+	 * Constructor for initializing long-term memory
+	 * 
+	 * @param builder
+	 * @param agentCoreMemory
+	 */
+	public SpringAIAgentController(ChatClient.Builder builder, AgentCoreMemory agentCoreMemory) {
+		var options = ToolCallingChatOptions.builder()
+				 //.model("amazon.nova-lite-v1:0")
+				 .model("amazon.nova-pro-v1:0")
+				//.model("amazon.nova-2-lite-v1:0")
+				.maxTokens(2000).build();
+
+		// auto-discovery of the long-term memory
+		this.chatClient = builder
+				.defaultAdvisors(agentCoreMemory.advisors)	
 				.defaultOptions(options)
 				// .defaultSystem(SYSTEM_PROMPT)
 				.build();
