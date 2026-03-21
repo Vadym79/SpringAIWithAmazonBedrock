@@ -73,9 +73,10 @@ public class SpringAIAgentController   {
 			.region(Region.US_EAST_1).build();
 
 	public SpringAIAgentController(ChatClient.Builder builder, ChatMemory chatMemory) {
-		var options = ToolCallingChatOptions.builder().model("amazon.nova-lite-v1:0")
+		var options = ToolCallingChatOptions.builder()
+				//.model("amazon.nova-lite-v1:0")
 				// .model("amazon.nova-pro-v1:0")
-				.model("anthropic.claude-sonnet-4-20250514-v1:0")
+				.model("amazon.nova-2-lite-v1:0")
 				.maxTokens(2000).build();
 
 		this.chatClient = builder
