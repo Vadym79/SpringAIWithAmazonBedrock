@@ -74,7 +74,7 @@ public class SpringAIAgentController   {
 	private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
 			.region(Region.US_EAST_1).build();
 
-	 private final String CONVERSATION_ID="static-conversation-id-12345678";
+	 private final String CONVERSATION_ID="default-actor-id-12345678";
 
 
 	/** Constructor for initializing short-term memory
@@ -127,11 +127,9 @@ public class SpringAIAgentController   {
 		//.model("amazon.nova-lite-v1:0")
 	    .model("us.amazon.nova-pro-v1:0")
 	    .maxTokens(2000)
-	    /*
 	    .cacheOptions(BedrockCacheOptions.builder() // see https://spring.io/blog/2025/10/30/spring-ai-bedrock-prompt-caching-blog
 	    		.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
 	    		.build())
-	     */
 		.build();
 		
 		/*
