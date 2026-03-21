@@ -98,7 +98,7 @@ public class SpringAIAgentController   {
 	
 
 	/**
-	 * Constructor for initializing long-term memory
+	 * Constructor for initializing ashort-term and long-term memories
 	 * 
 	 * @param builder
 	 * @param agentCoreMemory
@@ -110,8 +110,8 @@ public class SpringAIAgentController   {
 				//.model("amazon.nova-2-lite-v1:0")
 				.maxTokens(2000).build();
 
-		// auto-discovery of the long-term memory
-		logger.info(" initialize STM+LTM "+agentCoreMemory);
+		// auto-discovery of the short-term and long-term memories
+		logger.info("initialize STM+LTM "+agentCoreMemory);
 		this.chatClient = builder
 				.defaultAdvisors(agentCoreMemory.advisors)	
 				.defaultOptions(options)
