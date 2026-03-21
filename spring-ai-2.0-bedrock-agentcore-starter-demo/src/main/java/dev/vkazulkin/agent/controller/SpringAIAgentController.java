@@ -5,40 +5,41 @@ import java.io.IOException;
 import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
-
-import org.springaicommunity.agentcore.annotation.AgentCoreInvocation;
+import java.util.UUID;
 
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springaicommunity.agentcore.annotation.AgentCoreInvocation;
 import org.springaicommunity.agentcore.context.AgentCoreContext;
-import org.springaicommunity.agentcore.memory.AgentCoreLongTermMemoryAdvisor;
 import org.springaicommunity.agentcore.memory.AgentCoreMemory;
-import org.springaicommunity.agentcore.memory.AgentCoreShortTermMemoryRepository;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.mcp.AsyncMcpToolCallbackProvider;
-import org.springframework.ai.mcp.McpToolFilter;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpClientTransport;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.CognitoIdentityProviderException;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.DescribeUserPoolClientRequest;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUserPoolClientsRequest;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUserPoolsRequest;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.UserPoolClientDescription;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.UserPoolClientType;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.UserPoolDescriptionType;
 
 @RestController
 public class SpringAIAgentController   {
@@ -72,7 +73,8 @@ public class SpringAIAgentController   {
 	private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
 			.region(Region.US_EAST_1).build();
 
-	
+	 private final String conversationId;
+
 
 	/** Constructor for initializing short-term memory
 	 * 
@@ -81,6 +83,7 @@ public class SpringAIAgentController   {
 	 */
 	/**
 	public SpringAIAgentController(ChatClient.Builder builder, ChatMemory chatMemory) {
+	    this.conversationId = UUID.randomUUID().toString();
 		var options = ToolCallingChatOptions.builder()
 				 //.model("amazon.nova-lite-v1:0")
 				 .model("amazon.nova-pro-v1:0")
@@ -104,6 +107,10 @@ public class SpringAIAgentController   {
 	 * @param agentCoreMemory
 	 */
 	public SpringAIAgentController(ChatClient.Builder builder, AgentCoreMemory agentCoreMemory) {
+	
+		logger.info("initialize STM+LTM "+agentCoreMemory);
+		
+		this.conversationId = UUID.randomUUID().toString();
 		var options = ToolCallingChatOptions.builder()
 				 //.model("amazon.nova-lite-v1:0")
 				 .model("amazon.nova-pro-v1:0")
@@ -111,7 +118,15 @@ public class SpringAIAgentController   {
 				.maxTokens(2000).build();
 
 		// auto-discovery of the short-term and long-term memories
-		logger.info("initialize STM+LTM "+agentCoreMemory);
+		for (var ltmAdvisor : agentCoreMemory.longTermMemoryAdvisors) {
+			logger.info(" ltm advisor  "+ltmAdvisor);
+			logger.info(" ltm advisor statretgy "+ltmAdvisor.getName());
+			logger.info(" ltm advisor order  "+ltmAdvisor.getOrder());
+			
+		}
+		MessageChatMemoryAdvisor stmAdvisor= agentCoreMemory.shortTermMemoryAdvisor;
+		logger.info(" stm advisor statretgy "+stmAdvisor.getName());
+		logger.info(" stm advisor order  "+stmAdvisor.getOrder());
 		this.chatClient = builder
 				.defaultAdvisors(agentCoreMemory.advisors)	
 				.defaultOptions(options)
@@ -139,7 +154,9 @@ public class SpringAIAgentController   {
 
 			var syncMcpToolCallbackProvider = SyncMcpToolCallbackProvider.builder().mcpClients(client).build();
 
-			return this.chatClient.prompt().user(promptRequest.prompt()).toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks())
+			return this.chatClient.prompt().user(promptRequest.prompt())
+					.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+					.toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks())
 					.call().content();
 		}
 	}
@@ -176,7 +193,9 @@ public class SpringAIAgentController   {
 				*/
 				.build();
 
-		var content = this.chatClient.prompt().user(promptRequest.prompt())
+		var content = this.chatClient.prompt()
+				 .user(promptRequest.prompt())
+				 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
 				.toolCallbacks(asyncMcpToolCallbackProvider.getToolCallbacks()).stream().content();
 
 		//client.close();
