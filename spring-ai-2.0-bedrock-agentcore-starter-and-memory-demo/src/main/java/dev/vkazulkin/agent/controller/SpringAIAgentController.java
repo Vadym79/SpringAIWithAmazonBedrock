@@ -74,10 +74,10 @@ public class SpringAIAgentController   {
 	private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
 			.region(Region.US_EAST_1).build();
 
-	 private final String CONVERSATION_ID="default-actor-id-12345678";
+	 //private final String CONVERSATION_ID="default-actor-id-12345678";
 	 
 	 // to include custom session id into the conversation. 'actorId' or 'actorId:sessionId'
-	 //private final String CONVERSATION_ID="default-actor-id-12345678:default-session-id-12345678";
+	 private final String CONVERSATION_ID="default-actor-id-12345678:default-session-id-12345678";
 	 
 
 
