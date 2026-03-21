@@ -17,7 +17,7 @@ public class DeployRuntimeAgent {
 	private static final String CONTAINER_URI="{AWS_ACCOUNT_ID}.dkr.ecr.{AWS_REGION}.amazonaws.com/{ECR_REPO}"; 
 	
 	private static final String CREATE_AGENT_RUNTIME_CONTAINER_URI=CONTAINER_URI+":v1";  //change to your version schema
-	private static final String UPDATE_AGENT_RUNTIME_CONTAINER_URI=CONTAINER_URI+":v14"; //change to your version schema
+	private static final String UPDATE_AGENT_RUNTIME_CONTAINER_URI=CONTAINER_URI+":v25"; //change to your version schema
 	
 	private static final String AGENT_RUNTIME_NAME="{AGENT_RUNTIME_NAME}";
 	private static final String AGENT_RUNTIME_ID="{AGENT_RUNTIME_ID}";

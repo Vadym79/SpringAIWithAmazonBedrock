@@ -59,8 +59,15 @@ public class SpringAIAgentController   {
 	@Value("${cognito.auth.token.resource.server.id}")
 	private String RESOURCE_SERVER_ID;
 	
-	@Value("${amazon.bedrock.agentcore.gateway.url}")
-	private String AGENTCORE_GATEWAY_URL;
+	//@Value("${amazon.bedrock.agentcore.gateway.url}")
+	//private String AGENTCORE_GATEWAY_URL;
+	
+	@Value("${amazon.bedrock.agentcore.gateway.base.url}")
+	private String AGENTCORE_GATEWAY_BASE_URL;
+	
+	@Value("${amazon.bedrock.agentcore.gateway.endpoint}")
+	private String AGENTCORE_GATEWAY_ENDPOINT;
+
 
 	private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
 			.region(Region.US_EAST_1).build();
@@ -151,8 +158,8 @@ public class SpringAIAgentController   {
 		String headerValue = "Bearer " + token;
 		var httpRequestBuilder = HttpRequest.newBuilder().header("Authorization", headerValue);
 		
-		return HttpClientStreamableHttpTransport.builder("")
-				.endpoint(AGENTCORE_GATEWAY_URL)
+		return HttpClientStreamableHttpTransport.builder(AGENTCORE_GATEWAY_BASE_URL)
+				.endpoint(AGENTCORE_GATEWAY_ENDPOINT)
 				.requestBuilder(httpRequestBuilder)
 				.build();
 	}
