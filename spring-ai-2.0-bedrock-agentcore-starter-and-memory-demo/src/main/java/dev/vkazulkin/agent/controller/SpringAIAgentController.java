@@ -119,6 +119,8 @@ public class SpringAIAgentController   {
 	
 		logger.info("initialize STM+LTM "+agentCoreMemory);
 		
+		logger.info(" otel log headers "+System.getenv("OTEL_EXPORTER_OTLP_LOGS_HEADERS"));
+		
 		/*
 		var options = ToolCallingChatOptions.builder()
 				 //.model("amazon.nova-lite-v1:0")
