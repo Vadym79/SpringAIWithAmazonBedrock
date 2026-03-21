@@ -74,9 +74,9 @@ public class SpringAIAgentController   {
 
 	public SpringAIAgentController(ChatClient.Builder builder, ChatMemory chatMemory) {
 		var options = ToolCallingChatOptions.builder()
-				//.model("amazon.nova-lite-v1:0")
-				// .model("amazon.nova-pro-v1:0")
-				.model("amazon.nova-2-lite-v1:0")
+				 //.model("amazon.nova-lite-v1:0")
+				 .model("amazon.nova-pro-v1:0")
+				//.model("amazon.nova-2-lite-v1:0")
 				.maxTokens(2000).build();
 
 		this.chatClient = builder
