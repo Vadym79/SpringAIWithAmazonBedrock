@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
@@ -14,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springaicommunity.agentcore.annotation.AgentCoreInvocation;
 import org.springaicommunity.agentcore.context.AgentCoreContext;
 import org.springaicommunity.agentcore.memory.AgentCoreMemory;
+import org.springframework.ai.bedrock.converse.BedrockChatOptions;
+import org.springframework.ai.bedrock.converse.api.BedrockCacheOptions;
+import org.springframework.ai.bedrock.converse.api.BedrockCacheStrategy;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.mcp.AsyncMcpToolCallbackProvider;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
@@ -108,13 +109,25 @@ public class SpringAIAgentController   {
 	public SpringAIAgentController(ChatClient.Builder builder, AgentCoreMemory agentCoreMemory) {
 	
 		logger.info("initialize STM+LTM "+agentCoreMemory);
+		
+		/*
 		var options = ToolCallingChatOptions.builder()
 				 //.model("amazon.nova-lite-v1:0")
-				 .model("amazon.nova-pro-v1:0")
+				 .model("amazon.nova-pro-v1:0")				 
 				//.model("amazon.nova-2-lite-v1:0")
 				.maxTokens(2000).build();
-
-		// auto-discovery of the short-term and long-term memories
+        */
+		
+		var options = BedrockChatOptions.builder()
+		//.model("amazon.nova-lite-v1:0")
+	    .model("us.amazon.nova-pro-v1:0")
+	    .maxTokens(200)
+	    .cacheOptions(BedrockCacheOptions.builder()
+	    		.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
+	    		.build())
+		.build();
+		
+		/*
 		for (var ltmAdvisor : agentCoreMemory.longTermMemoryAdvisors) {
 			logger.info(" ltm advisor  "+ltmAdvisor);
 			logger.info(" ltm advisor statretgy "+ltmAdvisor.getName());
@@ -124,9 +137,13 @@ public class SpringAIAgentController   {
 		MessageChatMemoryAdvisor stmAdvisor= agentCoreMemory.shortTermMemoryAdvisor;
 		logger.info(" stm advisor statretgy "+stmAdvisor.getName());
 		logger.info(" stm advisor order  "+stmAdvisor.getOrder());
+		*/
+		
+				
+		// auto-discovery of the short-term and long-term memories
 		this.chatClient = builder
 				.defaultAdvisors(agentCoreMemory.advisors)	
-				.defaultOptions(options)
+				.defaultOptions(options)				
 				// .defaultSystem(SYSTEM_PROMPT)
 				.build();
 	}
