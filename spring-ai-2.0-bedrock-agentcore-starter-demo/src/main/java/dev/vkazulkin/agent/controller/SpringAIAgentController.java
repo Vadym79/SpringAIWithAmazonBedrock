@@ -73,7 +73,7 @@ public class SpringAIAgentController   {
 	private static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
 			.region(Region.US_EAST_1).build();
 
-	 private final String conversationId;
+	 private final String CONVERSATION_ID="static-conversation-id-12345678";
 
 
 	/** Constructor for initializing short-term memory
@@ -83,7 +83,6 @@ public class SpringAIAgentController   {
 	 */
 	/**
 	public SpringAIAgentController(ChatClient.Builder builder, ChatMemory chatMemory) {
-	    this.conversationId = UUID.randomUUID().toString();
 		var options = ToolCallingChatOptions.builder()
 				 //.model("amazon.nova-lite-v1:0")
 				 .model("amazon.nova-pro-v1:0")
@@ -109,8 +108,6 @@ public class SpringAIAgentController   {
 	public SpringAIAgentController(ChatClient.Builder builder, AgentCoreMemory agentCoreMemory) {
 	
 		logger.info("initialize STM+LTM "+agentCoreMemory);
-		
-		this.conversationId = UUID.randomUUID().toString();
 		var options = ToolCallingChatOptions.builder()
 				 //.model("amazon.nova-lite-v1:0")
 				 .model("amazon.nova-pro-v1:0")
@@ -155,7 +152,7 @@ public class SpringAIAgentController   {
 			var syncMcpToolCallbackProvider = SyncMcpToolCallbackProvider.builder().mcpClients(client).build();
 
 			return this.chatClient.prompt().user(promptRequest.prompt())
-					.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+					.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, CONVERSATION_ID))
 					.toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks())
 					.call().content();
 		}
@@ -195,7 +192,7 @@ public class SpringAIAgentController   {
 
 		var content = this.chatClient.prompt()
 				 .user(promptRequest.prompt())
-				 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, CONVERSATION_ID))
 				.toolCallbacks(asyncMcpToolCallbackProvider.getToolCallbacks()).stream().content();
 
 		//client.close();
