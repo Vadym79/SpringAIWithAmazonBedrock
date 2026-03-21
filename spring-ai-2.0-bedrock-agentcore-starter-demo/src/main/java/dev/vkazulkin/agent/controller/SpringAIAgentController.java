@@ -84,11 +84,16 @@ public class SpringAIAgentController   {
 	 */
 	/**
 	public SpringAIAgentController(ChatClient.Builder builder, ChatMemory chatMemory) {
-		var options = ToolCallingChatOptions.builder()
-				 //.model("amazon.nova-lite-v1:0")
-				 .model("amazon.nova-pro-v1:0")
-				//.model("amazon.nova-2-lite-v1:0")
-				.maxTokens(2000).build();
+	
+		var options = BedrockChatOptions.builder()
+		//.model("amazon.nova-lite-v1:0")
+	    .model("us.amazon.nova-pro-v1:0")
+	    .maxTokens(2000)
+	    .cacheOptions(BedrockCacheOptions.builder() // see https://spring.io/blog/2025/10/30/spring-ai-bedrock-prompt-caching-blog
+	    		.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
+	    		.build())
+		.build();
+		
 
 		this.chatClient = builder
 				 // auto-discovery of the short-term memory
@@ -121,8 +126,8 @@ public class SpringAIAgentController   {
 		var options = BedrockChatOptions.builder()
 		//.model("amazon.nova-lite-v1:0")
 	    .model("us.amazon.nova-pro-v1:0")
-	    .maxTokens(200)
-	    .cacheOptions(BedrockCacheOptions.builder()
+	    .maxTokens(2000)
+	    .cacheOptions(BedrockCacheOptions.builder() // see https://spring.io/blog/2025/10/30/spring-ai-bedrock-prompt-caching-blog
 	    		.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
 	    		.build())
 		.build();

@@ -14,7 +14,15 @@ public class InvokeRuntimeAgent {
 	
 	public static void main(String[] args) throws Exception {
 
+
 		String payload = "{\"prompt\":\"Give me an overview of the order with the id equals 100\"}";
+		//String payload = "{\"prompt\":\"Give me an overview of the order with the id equals 200\"}";
+		//String payload = "{\"prompt\":\"My name is Vadym. Today is a sunny weather\"}";
+		//String payload = "{\"prompt\":\" Can you tell me my name, today's weather and summarize all orders you have information about \"}";
+		//String payload = "{\"prompt\":\"I previously told you my name and today's weather. Can you please provide them to me\"}";
+		//String payload = "{\"prompt\":\" Can you tell me my name, today's weather? \"}";
+		//String payload = "{\"prompt\":\" Please provide me with the summary of all orders you already have information about \"}";
+		
 		BedrockAgentCoreClient bedrockAgentCoreClient = BedrockAgentCoreClient.builder().region(Region.US_EAST_1)
 				.build();
 
