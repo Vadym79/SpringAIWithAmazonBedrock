@@ -14,6 +14,9 @@ import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springaicommunity.agentcore.context.AgentCoreContext;
+import org.springaicommunity.agentcore.memory.AgentCoreLongTermMemoryAdvisor;
+import org.springaicommunity.agentcore.memory.AgentCoreMemory;
+import org.springaicommunity.agentcore.memory.AgentCoreShortTermMemoryRepository;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -68,7 +71,8 @@ public class SpringAIAgentController   {
 				// .model("anthropic.claude-3-5-sonnet-20240620-v1:0")
 				.maxTokens(2000).build();
 
-		this.chatClient = builder.defaultAdvisors()
+		this.chatClient = builder
+				.defaultAdvisors()
 				.defaultOptions(options)
 				// .defaultSystem(SYSTEM_PROMPT)
 				.build();
