@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import dev.vkazulkin.conference.ConferenceSearchTool;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootApplication
 public class SpringMcpConferenceSearchServerApplication {
@@ -21,4 +22,9 @@ public class SpringMcpConferenceSearchServerApplication {
 	public List<ToolCallback> conferenceSearchTools(ConferenceSearchTool conferenceSearchTool) {
 		return List.of(ToolCallbacks.from(conferenceSearchTool));
 	}
+	
+	@Bean
+    public ObjectMapper objectMapper() {
+       return new ObjectMapper();
+    }
 }
