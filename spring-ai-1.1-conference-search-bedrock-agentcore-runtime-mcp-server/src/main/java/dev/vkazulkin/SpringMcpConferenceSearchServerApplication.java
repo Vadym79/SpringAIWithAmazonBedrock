@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Bean;
 import dev.vkazulkin.conference.ConferenceSearchTool;
 
 @SpringBootApplication
-public class SpringMcpConferenceSearchApplication {
+public class SpringMcpConferenceSearchServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringMcpConferenceSearchApplication.class, args);
+		SpringApplication.run(SpringMcpConferenceSearchServerApplication.class, args);
 	}
 
 	@Bean
