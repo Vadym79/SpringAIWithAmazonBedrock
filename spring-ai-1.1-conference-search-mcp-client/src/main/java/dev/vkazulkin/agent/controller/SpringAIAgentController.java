@@ -12,8 +12,7 @@ import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -87,41 +86,35 @@ public class SpringAIAgentController {
 	}
 
 	/**
-	 * returns synchronous agent answer
+	 * GET method which has a prompt as an input parameter and outputs the agent response synchronously
 	 * 
 	 * @param prompt - prompt
 	 * @return agent answer
 	 */
-	@PostMapping(value = "/invocationss", consumes = { "*/*" })
-	public String invoke(@RequestBody String prompt) {
+	@GetMapping(value = "/conference-search-sync", consumes = "text/plain")
+	public String conferenceSearchSync(@RequestParam String prompt) {
 		logger.info("invocations endpoint with prompt: " + prompt);
 		String token = getAuthToken();
 		try (var client = McpClient.sync(getMcpClientTransport(token)).build()) {
-			logger.info("before init");
-			var result= client.initialize();
-			logger.info("init result "+result);
+			client.initialize();
 			var toolsResult = client.listTools();
-			logger.info("list tools ");
-			
 			for (var tool : toolsResult.tools()) {
 				logger.info("tool found " + tool);
-			}
-           
+			}       
 			var syncMcpToolCallbackProvider = SyncMcpToolCallbackProvider.builder().mcpClients(client).build();
-			logger.info("sync mcp tool");
 			return this.chatClient.prompt().user(prompt).toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks())
 					.call().content();
 		}
 	}
 
 	/**
-	 * public post agentcore runtime endpoint to receive agent requests
+	 *  GET method which has a prompt as an input parameter and outputs the agent response asynchronously
 	 * 
 	 * @param prompt - prompt
 	 * @return asynchronous agent answer
 	 */
-	@PostMapping(value = "/invocations", consumes = { "*/*" })
-	public Flux<String> invocations(@RequestBody String prompt) {
+	@GetMapping(value = "/conference-search", consumes = "text/plain")
+	public Flux<String> conferenceSearch(@RequestParam String prompt) {
 		logger.info("invocations endpoint with prompt: " + prompt);
 
 		String token = getAuthToken();
@@ -129,12 +122,8 @@ public class SpringAIAgentController {
 			throw new RuntimeException("can't obtain authorization token");
 		}
 		var client = McpClient.async(getMcpClientTransport(token)).build();
-		
-		logger.info("before init");
 		client.initialize();
-		logger.info("after init");
 		var toolsResult = client.listTools(); 
-		logger.info("before after list tools");
 		for (var tool : toolsResult.block().tools()) { 
 			logger.info("tool found " + tool); 
 		}
